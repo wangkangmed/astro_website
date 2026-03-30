@@ -1,35 +1,32 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
   const allReports = await getCollection('reports');
-  return allReports.map(entry => ({
-    // 关键修改：把 entry.slug 改成 entry.id
-    params: { slug: entry.id }, 
+  return allReports.map((entry) => ({
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
+type Props = {
+  entry: CollectionEntry<'reports'>;
+};
+
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
-<!DOCTYPE html>
+
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="utf-8" />
     <title>{entry.data.title}</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #0070f3; text-decoration: none; }
-    </style>
-</head>
-<body>
-    <a href="/astro_website/" class="back-link">← 返回列表</a>
-    <article>
-        <h1>{entry.data.title}</h1>
-        <p style="color: #666;">发布日期：{entry.data.pubDate.toLocaleDateString()}</p>
-        <hr />
-        <Content />
-    </article>
-</body>
+  </head>
+  <body>
+    <a href="/astro_website/">← 返回首页</a>
+    <h1>{entry.data.title}</h1>
+    <p>发布日期：{entry.data.pubDate.toLocaleDateString()}</p>
+    <hr />
+    <Content />
+  </body>
 </html>
