@@ -1,52 +1,28 @@
 ---
 import { getCollection } from 'astro:content';
 
-// 抓取 reports 集合下的所有文章，并按时间排序
 const allReports = (await getCollection('reports')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>我的技术简报</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-        .debug-box { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; margin-bottom: 30px; overflow-x: auto; font-size: 14px; }
-        .debug-title { color: #ffeb3b; margin-top: 0; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>我的技术简报</title>
 </head>
 <body>
-    <h1>🚀 每日技术简报</h1>
-
-    {allReports.length > 0 && (
-        <div class="debug-box">
-            <h3 class="debug-title">🚨 调试信息：你的数据到底长什么样？（看完即可删除这段代码）</h3>
-            <pre>
-                {JSON.stringify(allReports[0], null, 2)}
-            </pre>
-        </div>
-    )}
-
-    <ul>
-      {allReports.map(post => {
-          // 🔥 终极兼容：不管它藏在哪里，我们都把它揪出来
-          // 如果这里最后取到的是 '找不到标识符'，说明对象结构超出了常规理解
-          const uniqueIdentifier = post.id || post.slug || (post.data && post.data.slug) || '找不到标识符';
-          
-          return (
-            <li>
-              <a href={`/astro_website/reports/${uniqueIdentifier}/`}>{post.data.title || '无标题'}</a>
-              <span class="date">
-                ({post.data.pubDate ? new Date(post.data.pubDate).toLocaleDateString() : '无日期'})
-              </span>
-            </li>
-          );
-      })}
-    </ul>
-    
-    {allReports.length === 0 && <p>目前还没有报告...</p>}
+  <h1>🚀 每日技术简报</h1>
+  <ul>
+    {allReports.map(post => (
+      <li>
+        {/* 这里坚决使用 post.id，并且使用反引号 */}
+        <a href={`/astro_website/reports/${post.id}/`}>{post.data.title}</a>
+        <span style="color: #888; margin-left: 10px;">
+          ({post.data.pubDate.toLocaleDateString()})
+        </span>
+      </li>
+    ))}
+  </ul>
 </body>
 </html>
