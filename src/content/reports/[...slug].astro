@@ -1,27 +1,33 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro'; 
 
-// 1. 告诉 Astro 有哪些 Markdown 文件需要生成页面
 export async function getStaticPaths() {
-  // 注意：这里的 'reports' 必须和你的 content/ 文件夹名以及 config.ts 一致
-  const allReports = await getCollection('reports'); 
+  const allReports = await getCollection('reports');
   return allReports.map(entry => ({
-    params: { slug: entry.slug }, 
-    props: { entry },
+    params: { slug: entry.slug }, props: { entry },
   }));
 }
 
-// 2. 获取当前页面的数据
 const { entry } = Astro.props;
-const { Content } = await entry.render(); 
+const { Content } = await entry.render();
 ---
-
-<Layout title={entry.data.title}>
-  <article style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-    <h1>{entry.data.title}</h1>
-    <p style="color: #666;">发布日期：{entry.data.pubDate.toLocaleDateString()}</p>
-    <hr />
-    <Content /> 
-  </article>
-</Layout>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{entry.data.title}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #0070f3; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="/astro_website/" class="back-link">← 返回列表</a>
+    <article>
+        <h1>{entry.data.title}</h1>
+        <p style="color: #666;">发布日期：{entry.data.pubDate.toLocaleDateString()}</p>
+        <hr />
+        <Content />
+    </article>
+</body>
+</html>
