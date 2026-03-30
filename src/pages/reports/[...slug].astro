@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const reports = await getCollection('reports');
+  
+  return reports.map(entry => {
+    // 🔥 关键修复：和首页保持完全一致的提取逻辑！
+    // 优先用 slug，如果没有就用 id 并切掉可能存在的 .md 后缀
+    const finalSlug = entry.slug || (entry.id && entry.id.replace(/\.md$/, ''));
+    
+    return {
+      params: { slug: finalSlug }, 
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{entry.data.title}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #0070f3; text-decoration: none; }
+        .date { color: #666; font-size: 0.9em; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <a href="/astro_website/" class="back-link">← 返回首1页列表</a>
+    
+    <article>
+        <h1>{entry.data.title}</h1>
+        <div class="date">
+            发布日期：{entry.data.pubDate ? new Date(entry.data.pubDate).toLocaleDateString() : '未知日期'}
+        </div>
+        
+        <Content />
+    </article>
+</body>
+</html>

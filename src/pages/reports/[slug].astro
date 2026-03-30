@@ -1,0 +1,32 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const reports = await getCollection('reports');
+  return reports.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = {
+  entry: CollectionEntry<'reports'>;
+};
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>{entry.data.title}</title>
+  </head>
+  <body>
+    <a href="/astro_website/">← 返回首页</a>
+    <h1>{entry.data.title}</h1>
+    <p>发布日期：{entry.data.pubDate.toLocaleDateString()}</p>
+    <hr />
+    <Content />
+  </body>
+</html>
