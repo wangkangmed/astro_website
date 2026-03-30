@@ -1,27 +1,38 @@
 ---
-// 引入你的布局组件（名字可能叫 Layout 或 BaseLayout）
-import Layout from '../layouts/Layout.astro'; 
 import { getCollection } from 'astro:content';
 
+// 抓取 reports 集合下的所有文章，并按时间排序
 const allReports = (await getCollection('reports')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
 
-<Layout title="我的技术简报">
-  <main>
-    <h1>每日技术简报</h1>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的技术简报</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        a { text-decoration: none; color: #0070f3; font-weight: bold; font-size: 1.2rem; }
+        a:hover { text-decoration: underline; }
+        .date { color: #888; font-size: 0.9rem; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 每日技术简报</h1>
     <ul>
       {allReports.map(post => (
         <li>
-          <a href={`/astro_website/reports/${post.slug}/`}>
-            {post.data.title}
-          </a>
-          <span>({post.data.pubDate.toLocaleDateString()})</span>
+          <a href={`/astro_website/reports/${post.slug}/`}>{post.data.title}</a>
+          <span class="date">({post.data.pubDate.toLocaleDateString()})</span>
         </li>
       ))}
     </ul>
     
-    {allReports.length === 0 && <p>📦 仓库还是空的，请检查 OpenClaw 搬运工是否干活了。</p>}
-  </main>
-</Layout>
+    {allReports.length === 0 && <p>目前还没有报告，请检查 OpenClaw 是否已成功推送 MD 文件到 src/content/reports/ 目录。</p>}
+</body>
+</html>
