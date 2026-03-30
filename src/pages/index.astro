@@ -24,15 +24,15 @@ const allReports = (await getCollection('reports')).sort(
 </head>
 <body>
     <h1>🚀 每日技术简报</h1>
+
     <ul>
       {allReports.map(post => (
         <li>
-          <a href={`/astro_website/reports/${post.slug}/`}>{post.data.title}</a>
+          <a href={`/astro_website/reports/${post.id}/`}>{post.data.title}</a>
           <span class="date">({post.data.pubDate.toLocaleDateString()})</span>
         </li>
       ))}
     </ul>
-    
     {allReports.length === 0 && <p>目前还没有报告，请检查 OpenClaw 是否已成功推送 MD 文件到 src/content/reports/ 目录。</p>}
 </body>
 </html>
