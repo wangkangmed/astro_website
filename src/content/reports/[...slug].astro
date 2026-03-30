@@ -4,7 +4,9 @@ import { getCollection } from 'astro:content';
 export async function getStaticPaths() {
   const allReports = await getCollection('reports');
   return allReports.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
+    // 关键修改：把 entry.slug 改成 entry.id
+    params: { slug: entry.id }, 
+    props: { entry },
   }));
 }
 
